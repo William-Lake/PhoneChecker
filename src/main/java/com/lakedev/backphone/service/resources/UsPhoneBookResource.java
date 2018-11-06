@@ -3,6 +3,8 @@ package com.lakedev.backphone.service.resources;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.nodes.Element;
+
 import com.lakedev.backphone.service.PhoneNumberFormatter;
 
 /**

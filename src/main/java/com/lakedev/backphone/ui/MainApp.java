@@ -1,174 +1,256 @@
 package com.lakedev.backphone.ui;
 
-import org.hexworks.zircon.api.AppConfigs;
-import org.hexworks.zircon.api.ColorThemes;
-import org.hexworks.zircon.api.Components;
-import org.hexworks.zircon.api.Positions;
-import org.hexworks.zircon.api.Screens;
-import org.hexworks.zircon.api.Sizes;
-import org.hexworks.zircon.api.SwingApplications;
-import org.hexworks.zircon.api.TileColors;
-import org.hexworks.zircon.api.application.AppConfig;
-import org.hexworks.zircon.api.application.CursorStyle;
-import org.hexworks.zircon.api.component.Button;
-import org.hexworks.zircon.api.component.Panel;
-import org.hexworks.zircon.api.component.TextArea;
-import org.hexworks.zircon.api.component.TextBox;
-import org.hexworks.zircon.api.data.Size;
-import org.hexworks.zircon.api.graphics.BoxType;
-import org.hexworks.zircon.api.grid.TileGrid;
-import org.hexworks.zircon.api.resource.BuiltInCP437TilesetResource;
-import org.hexworks.zircon.api.screen.Screen;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.DefaultWindowManager;
+import com.googlecode.lanterna.gui2.Direction;
+import com.googlecode.lanterna.gui2.EmptySpace;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.LinearLayout;
+import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.Window.Hint;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
+import com.lakedev.backphone.service.PhoneNumberSearcher;
+import com.lakedev.backphone.service.SearchResult;
 
 class MainApp
 {
-    private static final int TERMINAL_WIDTH = 25;
-    
-    private static final int TERMINAL_HEIGHT = 20;
-    
-    private static final Size SIZE = Size.Companion.create(TERMINAL_WIDTH, TERMINAL_HEIGHT);
-    
-//    private static final ColorTheme DEFAULT_THEME = 
-//    		
-//    		ColorThemes
-//    		.newBuilder()
-//    		.withPrimaryForegroundColor(TileColors.fromString("#acb296"))
-//    		.withPrimaryBackgroundColor(TileColors.fromString("#414f35"))
-//    		.withSecondaryForegroundColor(TileColors.fromString("#659075"))
-//    		.withSecondaryBackgroundColor(TileColors.fromString("#1c2b17"))
-//    		.withAccentColor(TileColors.fromString("#2f5e53"))
-//    		.build();
 	
-	MainApp()
+	private MultiWindowTextGUI gui;
+	private Table<String> tblResults;
+
+	MainApp() throws IOException
 	{
-		// Displaying a cursor
-		final AppConfig appConfig = 
-        		AppConfigs
-        		.newConfig()
-                .withCursorColor(TileColors.fromString("#66FF66"))
-                .withBlinkLengthInMilliSeconds(500)
-                .withCursorStyle(CursorStyle.FIXED_BACKGROUND)
-                .withCursorBlinking(true)
-                .withSize(SIZE)
-                .withDefaultTileset(BuiltInCP437TilesetResource.TAFFER_20X20)
-                .build();
+		/*
+		 * Terminal
+		 * Screen
+		 * Panel with vert. linear layout
+		 * 		Panel with horiz. linear layout
+		 * 			Label(Phone) | TextBox(Input) | Button(Search)
+		 * 		Table
+		 * 
+		 * input has a validation pattern: https://github.com/mabe02/lanterna/blob/master/docs/examples/gui/text_boxes.md
+		 * button first checks if there's input, creating dialog if not: https://github.com/mabe02/lanterna/blob/master/docs/examples/gui/message_dialogs.md
+		 */
+		
+		Terminal terminal = new DefaultTerminalFactory().createTerminal();
+		
+		Screen screen = new TerminalScreen(terminal);
+		
+		screen.startScreen();
+		
+		Panel pnlParent = new Panel();
+		
+		Panel pnlSearch = new Panel(new LinearLayout(Direction.HORIZONTAL));
+		
+		pnlSearch.addComponent(new Label("Phone #:"));
+		
+		pnlSearch.addComponent(new EmptySpace(new TerminalSize(1, 0)));
+		
+		final TextBox txtPhoneNumber = new TextBox();
+		
+		txtPhoneNumber.setValidationPattern(Pattern.compile("[0-9]*")).setPreferredSize(new TerminalSize(10, 1));
+		
+		pnlSearch.addComponent(txtPhoneNumber);
+		
+		pnlSearch.addComponent(new EmptySpace(new TerminalSize(1, 0)));
+		
+		final Button btnSearch = new Button("Search", new Runnable()
+		{
+			
+			public void run()
+			{
+				String phoneNumber = txtPhoneNumber.getText();
+				
+				if (phoneNumber.length() == 10)
+				{
+					
+					List<SearchResult> searchResults = PhoneNumberSearcher.getInstance().performSearch(phoneNumber);
 
-        final TileGrid tileGrid = SwingApplications.startTileGrid(appConfig);
-        
-        final Screen screen = Screens.createScreenFor(tileGrid);
-        
-        screen.setCursorVisibility(true);
-        
-//        final TextArea txtPhoneNumber = 
-//        		
-//        		Components
-//        		.textArea()
-//        		.withSize(Sizes.create(12, 1))
-//        		.withPosition(Positions.offset1x1())
-//        		.wrapWithBox(true)
-//        		.withBoxType(BoxType.SINGLE)
-//        		.build();
-//        
-//        final Button btnSearch = 
-//        		
-//        		Components
-//        		.button()
-//        		.withPosition(Positions.offset1x1().relativeToRightOf(txtPhoneNumber))
-//        		.withSize(Sizes.create(8, 1))
-//        		.withText("Search")
-//        		.build();
-        
-        final TextBox txtResults = 
-        		
-        		Components
-        		.textBox()
-//        		.withPosition(Positions.create(0, 1).relativeToBottomOf(txtPhoneNumber))
-        		.withPosition(Positions.create(3, 3))
-        		.withContentWidth(5)
-        		.withTitle("Results")
-        		.build();
-        		
-        
-//        btnSearch.onMouseClicked(mouseClicked -> System.out.println(txtPhoneNumber.getText()));
-//        
-//        screen.addComponent(txtPhoneNumber);
-//        
-//        screen.addComponent(btnSearch);
-        
-        screen.addComponent(txtResults);
-        
-        /*
-         * Entrappedinapalette
-         * LinuxMintDark
-         * ghostofachance (sort of)
-         */
-        screen.applyColorTheme(ColorThemes.linuxMintDark());
-        
-        screen.display();
+					if (searchResults.isEmpty())
+					{
+						new MessageDialogBuilder()
+						.setTitle("No Results")
+						.setText(String.format("No results were found for %s.", phoneNumber))
+						.addButton(MessageDialogButton.OK)
+						.build()
+						.showDialog(gui);
+					} else
+					{
+						tblResults.getTableModel().getRows().clear();
+						
+						searchResults
+						.stream()
+						.forEach(searchResult -> tblResults.getTableModel().addRow(searchResult.getResourceShorthand(), searchResult.getTargetResult()));
+					}
+					
+					txtPhoneNumber.setText("");
 
-        // KeyListener example
-//        screen.onKeyStroke(keyStroked -> tileGrid.putCharacter(keyStroked.getCharacter()));
+				} else
+				{
+					new MessageDialogBuilder()
+					.setTitle("ERROR")
+					.setText("Please provide a valid phone number with area code.")
+					.addButton(MessageDialogButton.OK)
+					.build()
+					.showDialog(gui);
+				}
+			}
+		});
+		
+		pnlSearch.addComponent(btnSearch);
+		
+		tblResults = new Table<String>("Source","Result");
+		
+		pnlParent.addComponent(pnlSearch);
+		
+		pnlParent.addComponent(new EmptySpace(new TerminalSize(0, 1)));
+		
+		pnlParent.addComponent(tblResults);
+		
+      // Create window to hold the panel
+      BasicWindow window = new BasicWindow();
+      window.setHints(Arrays.asList(Hint.EXPANDED));
+      
+      window.setComponent(pnlParent);
+
+      gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+      gui.addWindowAndWait(window);
+		
+		// +============================================================================+
+		
+		// Panels
+		// https://github.com/mabe02/lanterna/blob/master/docs/examples/gui/panels.md
+		
+//		// Setup terminal and screen layers
+//		Terminal terminal = new DefaultTerminalFactory().createTerminal();
+//		Screen screen = new TerminalScreen(terminal);
+//		screen.startScreen();
+//
+//		// Create window to hold the panel
+//		BasicWindow window = new BasicWindow();
+//
+//		Panel mainPanel = new Panel();
+//		mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+//
+//		Panel leftPanel = new Panel();
+//		mainPanel.addComponent(leftPanel.withBorder(Borders.singleLine("Left Panel")));
+//
+//		Panel rightPanel = new Panel();
+//		mainPanel.addComponent(rightPanel.withBorder(Borders.singleLine("Right Panel")));
+//		
+//		MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+//
+//		window.setComponent(mainPanel.withBorder(Borders.singleLine("Main Panel")));
+//		gui.addWindowAndWait(window);
+		
+		// +============================================================================+
+		
+		// Windows
+		// https://github.com/mabe02/lanterna/blob/master/docs/examples/gui/windows.md
+		
+//		// Setup terminal and screen layers
+//		Terminal terminal = new DefaultTerminalFactory().createTerminal();
+//		Screen screen = new TerminalScreen(terminal);
+//		screen.startScreen();
+//
+//		// Create window to hold the panel
+//		BasicWindow window = new BasicWindow();
+//
+//		// Create gui and start gui
+//		MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+//		gui.addWindowAndWait(window);
+		
+		// +============================================================================+
+		
+		// Basic Form Submission Example
+		// https://github.com/mabe02/lanterna/blob/master/docs/examples/gui/basic_form_submission.md
+//        // Setup terminal and screen layers
+//        Terminal terminal = new DefaultTerminalFactory().createTerminal();
+//        Screen screen = new TerminalScreen(terminal);
+//        screen.startScreen();
+//
+//        // Create panel to hold components
+//        Panel panel = new Panel();
+//        panel.setLayoutManager(new GridLayout(2));
+//
+//        final Label lblOutput = new Label("");
+//
+//        panel.addComponent(new Label("Num 1"));
+//        final TextBox txtNum1 = new TextBox().setValidationPattern(Pattern.compile("[0-9]*")).addTo(panel);
+//
+//        panel.addComponent(new Label("Num 2"));
+//        final TextBox txtNum2 = new TextBox().setValidationPattern(Pattern.compile("[0-9]*")).addTo(panel);
+//
+//        panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
+//        new Button("Add!", new Runnable() {
+//            public void run() {
+//                int num1 = Integer.parseInt(txtNum1.getText());
+//                int num2 = Integer.parseInt(txtNum2.getText());
+//                lblOutput.setText(Integer.toString(num1 + num2));
+//            }
+//        }).addTo(panel);
+//
+//        panel.addComponent(new EmptySpace(new TerminalSize(0, 0)));
+//        panel.addComponent(lblOutput);
+//
+//        // Create window to hold the panel
+//        BasicWindow window = new BasicWindow();
+//        window.setComponent(panel);
+//
+//        // Create gui and start gui
+//        MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+//        gui.addWindowAndWait(window);
+		
+// +============================================================================+
+		
+		// Hello World - GUI Example
+		// https://github.com/mabe02/lanterna/blob/master/docs/examples/gui/hello_world.md
+//        // Setup terminal and screen layers
+//        Terminal terminal = new DefaultTerminalFactory().createTerminal();
+//        Screen screen = new TerminalScreen(terminal);
+//        screen.startScreen();
+//
+//        // Create panel to hold components
+//        Panel panel = new Panel();
+//        panel.setLayoutManager(new GridLayout(2));
+//
+//        panel.addComponent(new Label("Forename"));
+//        panel.addComponent(new TextBox());
+//
+//        panel.addComponent(new Label("Surname"));
+//        panel.addComponent(new TextBox());
+//
+//        panel.addComponent(new EmptySpace(new TerminalSize(0,0))); // Empty space underneath labels
+//        panel.addComponent(new Button("Submit"));
+//
+//        // Create window to hold the panel
+//        BasicWindow window = new BasicWindow();
+//        window.setComponent(panel);
+//
+//        // Create gui and start gui
+//        MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+//        gui.addWindowAndWait(window);
         
-        /*
-         * 
-         */
-//
-//        Panel panel = Components.panel()
-//                .wrapWithBox(true) // panels can be wrapped in a box
-//                .withTitle("Panel") // if a panel is wrapped in a box a title can be displayed
-//                .wrapWithShadow(true) // shadow can be added
-//                .withSize(Sizes.create(32, 16)) // the size must be smaller than the parent's size
-//                .withPosition(Positions.offset1x1())
-//                .build(); // position is always relative to the parent
-//
-//        final Header header = Components.header()
-//                // this will be 1x1 left and down from the top left
-//                // corner of the panel
-//                .withPosition(Positions.offset1x1())
-//                .withText("Header")
-//                .build();
-//
-//        final CheckBox checkBox = Components.checkBox()
-//                .withText("Check me!")
-//                .withPosition(Positions.create(0, 1)
-//                        // the position class has some convenience methods
-//                        // for you to specify your component's position as
-//                        // relative to another one
-//                        .relativeToBottomOf(header))
-//                .build();
-//
-//        final Button left = Components.button()
-//                .withPosition(Positions.create(0, 1) // this means 1 row below the check box
-//                        .relativeToBottomOf(checkBox))
-//                .withText("Left")
-//                .build();
-//
-//        final Button right = Components.button()
-//                .withPosition(Positions.create(1, 0) // 1 column right relative to the left BUTTON
-//                        .relativeToRightOf(left))
-//                .withText("Right")
-//                .build();
-//
-//        panel.addComponent(header);
-//        panel.addComponent(checkBox);
-//        panel.addComponent(left);
-//        panel.addComponent(right);
-//
-//        screen.addComponent(panel);
-//
-//        // we can apply color themes to a screen
-//        screen.applyColorTheme(ColorThemes.monokaiBlue());
-//
-//        // this is how you can define interactions with a component
-//        left.onMouseReleased((mouseAction -> screen.applyColorTheme(ColorThemes.monokaiGreen())));
-//
-//        right.onMouseReleased((mouseAction -> screen.applyColorTheme(ColorThemes.monokaiViolet())));
-//
-//        // in order to see the changes you need to display your screen.
-//        screen.display();
+        
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
 		new MainApp();
 	}

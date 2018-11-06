@@ -1,5 +1,8 @@
 package com.lakedev.backphone.service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class SearchResult
 {
 	private String resource;
@@ -20,6 +23,17 @@ public class SearchResult
 
 	public String getResource()
 	{
+		return resource;
+	}
+	
+	public String getResourceShorthand()
+	{
+		Pattern pattern = Pattern.compile("https:\\/\\/www\\.(.*?)\\.com.*?");
+		
+		Matcher matcher = pattern.matcher(resource);
+		
+		if (matcher.find()) return matcher.group(1);
+		
 		return resource;
 	}
 
