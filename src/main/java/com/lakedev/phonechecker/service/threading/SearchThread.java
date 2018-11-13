@@ -1,8 +1,8 @@
-package com.lakedev.backphone.service.threading;
+package com.lakedev.phonechecker.service.threading;
 
 import java.util.concurrent.CountDownLatch;
 
-import com.lakedev.backphone.service.resources.DataResource;
+import com.lakedev.phonechecker.service.resources.DataResource;
 
 /**
  * SearchThread.java

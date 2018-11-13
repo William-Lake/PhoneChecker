@@ -1,8 +1,8 @@
-package com.lakedev.backphone.service.resources;
+package com.lakedev.phonechecker.service.resources;
 
 import org.jsoup.nodes.Element;
 
-import com.lakedev.backphone.service.PhoneNumberFormatter;
+import com.lakedev.phonechecker.service.PhoneNumberFormatter;
 
 /**
  * FastPeopleSearch.java

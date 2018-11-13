@@ -1,0 +1,29 @@
+= BackPhone
+
+_A small Java Utility to see who called you._
+
+== Notes
+
+* PhoneChecker was built with https://github.com/mabe02/lanterna[Lanterna] as it's primary UI. As a result, it doesn't use a cursor to navigate between its two primary controls.
+* The results are gathered from the following resources:
+** https://www.advancedbackgroundchecks.com/
+** https://www.fastpeoplesearch.com/
+** http://www.okcaller.com/
+** https://www.phonesearchfree.com/
+** https://www.spytox.com/
+** https://www.truepeoplesearch.com/
+** https://www.usphonebook.com/
+
+== Usage
+
+. Download the https://github.com/William-Lake/PhoneChecker/releases[latest release] of the PhoneChecker.
+. Double click on the runnable .jar file to launch PhoneChecker.
+. When PhoneChecker opens the phone number text field will be automatically selected. Enter a ten digit phone number, including area code. E.g. 1234567890
+. When ready to perform your search, hit the *tab* key to select the Search button. Press the *enter* key to select it.
+. PhoneChecker will collect results from a number of sites, displaying them in the provided table.
+. To perform a second search, hit the *left arrow* key to move back to the phone number text field and start the process again.
+
+== Examples
+
+.Performing a search
+image::images/Performing_Search.gif[]

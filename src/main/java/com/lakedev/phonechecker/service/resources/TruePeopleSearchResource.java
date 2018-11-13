@@ -1,22 +1,22 @@
-package com.lakedev.backphone.service.resources;
+package com.lakedev.phonechecker.service.resources;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Element;
 
-import com.lakedev.backphone.service.PhoneNumberFormatter;
+import com.lakedev.phonechecker.service.PhoneNumberFormatter;
 
 /**
- * AdvancedBackgroundChecksResource.java
+ * TruePeopleSearchResource.java
  * 
- * Collects phone number data from AdvancedBackgroundChecks.com
+ * Collects phone number data from TruePeopleSearch.com
  * 
- * @See https://www.advancedbackgroundchecks.com
+ * @See https://www.truepeoplesearch.com
  * @author William Lake
  *
  */
-public class AdvancedBackgroundChecksResource extends DataResource
+public class TruePeopleSearchResource extends DataResource
 {
 	/**
 	 * Constructor
@@ -25,20 +25,19 @@ public class AdvancedBackgroundChecksResource extends DataResource
 	 * the phone number data from the html provided by this
 	 * html resource.
 	 */
-	public AdvancedBackgroundChecksResource()
+	public TruePeopleSearchResource()
 	{
-		// Should be a string to get multiple results
-		setSelectionString("div.card-block");
+		setSelectionString("div.card.card-block.shadow-form.card-summary");
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	protected void constructUrl()
 	{
-		setUrl("https://www.advancedbackgroundchecks.com/" +
-				PhoneNumberFormatter
-				.formatPhoneNumber(
-						getPhoneNumber(),
+		setUrl("https://www.truepeoplesearch.com/results?phoneno=" + 
+				PhoneNumberFormatter.formatPhoneNumber(
+						getPhoneNumber(), 
+						PhoneNumberFormatter.PARENS, 
 						PhoneNumberFormatter.DASHES));
 	}
 
@@ -46,13 +45,13 @@ public class AdvancedBackgroundChecksResource extends DataResource
 	@Override
 	protected String gatherTargetData(Element result)
 	{
-		return gatherTargetDataViaGenericMethod(result);
+		return result.text();
 	}
 
 	@Override
 	protected String gatherTargetResult(String totalResult)
 	{
-		Pattern pattern = Pattern.compile("(.+?) Age \\d+ Lives in: .+");
+		Pattern pattern = Pattern.compile("(.+?) Age \\d+ Lives in .+");
 		
 		Matcher matcher = pattern.matcher(totalResult);
 		

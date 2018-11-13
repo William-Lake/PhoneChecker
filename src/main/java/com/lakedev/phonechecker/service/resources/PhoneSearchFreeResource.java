@@ -1,4 +1,4 @@
-package com.lakedev.backphone.service.resources;
+package com.lakedev.phonechecker.service.resources;
 
 import org.jsoup.nodes.Element;
 

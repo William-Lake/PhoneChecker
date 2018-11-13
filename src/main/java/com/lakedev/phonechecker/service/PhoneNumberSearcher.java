@@ -1,17 +1,17 @@
-package com.lakedev.backphone.service;
+package com.lakedev.phonechecker.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import com.lakedev.backphone.service.resources.AdvancedBackgroundChecksResource;
-import com.lakedev.backphone.service.resources.DataResource;
-import com.lakedev.backphone.service.resources.FastPeopleSearchResource;
-import com.lakedev.backphone.service.resources.PhoneSearchFreeResource;
-import com.lakedev.backphone.service.resources.SpyToxResource;
-import com.lakedev.backphone.service.resources.TruePeopleSearchResource;
-import com.lakedev.backphone.service.resources.UsPhoneBookResource;
-import com.lakedev.backphone.service.threading.SearchThread;
+import com.lakedev.phonechecker.service.resources.AdvancedBackgroundChecksResource;
+import com.lakedev.phonechecker.service.resources.DataResource;
+import com.lakedev.phonechecker.service.resources.FastPeopleSearchResource;
+import com.lakedev.phonechecker.service.resources.PhoneSearchFreeResource;
+import com.lakedev.phonechecker.service.resources.SpyToxResource;
+import com.lakedev.phonechecker.service.resources.TruePeopleSearchResource;
+import com.lakedev.phonechecker.service.resources.UsPhoneBookResource;
+import com.lakedev.phonechecker.service.threading.SearchThread;
 
 /**
  * PhoneNumberSearcher.java

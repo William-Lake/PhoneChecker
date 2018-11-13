@@ -1,4 +1,4 @@
-package com.lakedev.backphone.service.resources;
+package com.lakedev.phonechecker.service.resources;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.lakedev.backphone.service.SearchResult;
+import com.lakedev.phonechecker.service.SearchResult;
 
 /**
  * DataResource.java

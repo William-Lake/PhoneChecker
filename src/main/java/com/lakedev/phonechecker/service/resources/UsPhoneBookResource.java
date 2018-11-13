@@ -1,11 +1,11 @@
-package com.lakedev.backphone.service.resources;
+package com.lakedev.phonechecker.service.resources;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Element;
 
-import com.lakedev.backphone.service.PhoneNumberFormatter;
+import com.lakedev.phonechecker.service.PhoneNumberFormatter;
 
 /**
  * UsPhoneBookResource.java
